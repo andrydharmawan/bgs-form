@@ -11,6 +11,8 @@ import React, { useImperativeHandle, forwardRef, useState, useRef, useEffect } f
 import InputAdornment from "@mui/material/InputAdornment";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded';
+import EventRoundedIcon from '@mui/icons-material/EventRounded';
 
 const BgsDate = forwardRef(({
     name,
@@ -263,7 +265,8 @@ function DatePicker({ showLabelShrink, invalid, ref, className = "", mode = "dat
                                 {(showArrow && positionIcon === "right") && <BgsButton variant="icon" disabled={disabled || readOnly} onClick={(e) => {
                                     if (!disabled || !readOnly) bindTrigger(popupState).onClick(e.event)
                                 }}>
-                                    <Icon baseClassName="material-icons-round">{mode === "time" ? "schedule" : "event"}</Icon>
+                                    {mode === "time" ? <ScheduleRoundedIcon /> : <EventRoundedIcon />}
+                                    {/* <Icon baseClassName="material-icons-round">{mode === "time" ? "schedule" : "event"}</Icon> */}
                                 </BgsButton>}
                                 {suffix}
                             </InputAdornment>
@@ -275,7 +278,8 @@ function DatePicker({ showLabelShrink, invalid, ref, className = "", mode = "dat
                                 {(showArrow && positionIcon === "left") && <BgsButton variant="icon" sx={{ ml: "-5px" }} disabled={disabled || readOnly} onClick={(e) => {
                                     if (!disabled || !readOnly) bindTrigger(popupState).onClick(e.event)
                                 }}>
-                                    <Icon baseClassName="material-icons-round">{mode === "time" ? "schedule" : "event"}</Icon>
+                                    {mode === "time" ? <ScheduleRoundedIcon /> : <EventRoundedIcon />}
+                                    {/* <Icon baseClassName="material-icons-round">{mode === "time" ? "schedule" : "event"}</Icon> */}
                                 </BgsButton>}
                                 {prefix}
                             </InputAdornment>
