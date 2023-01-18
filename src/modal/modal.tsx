@@ -1,6 +1,6 @@
 
 import React from "react";
-import { createRoot } from 'react-dom/client';
+// import { createRoot } from 'react-dom/client';
 import Modal from "@mui/material/Modal";
 import { v4 } from "uuid"
 import Box from '@mui/material/Box';
@@ -104,7 +104,8 @@ export default function bgsModal({
         maxHeight,
         closeOnOutside,
         className,
-        element: createRoot(document.createElement("div")),
+        element: null,
+        // element: createRoot(document.createElement("div")),
         onHide,
         isBlur,
         name

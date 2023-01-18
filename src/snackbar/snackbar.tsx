@@ -2,7 +2,7 @@ import ReactDOM from "react-dom";
 import { v4 } from "uuid"
 import Snackbar from "@mui/material/Snackbar";
 import React from "react";
-import { createRoot } from 'react-dom/client';
+// import { createRoot } from 'react-dom/client';
 
 let element: ModalProps[] = [];
 
@@ -60,7 +60,8 @@ export default function bgsSnackbar({
     let { key }: any = element.find(x => x.message === message) || {};
 
     const container = document.getElementById('bgs-snackbar');
-    const root = createRoot(container!)
+    // const root = createRoot(container!)
+    const root = {}
     if (!key) {
         key = v4()
         element.push({
