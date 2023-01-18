@@ -8,7 +8,7 @@ import { ThemeProvider } from "@mui/material";
 import theme from "../config/theme";
 import { StrictMode } from "react";
 var element: MenuProps[] = [];
-import { BrowserRouter } from 'react-router-dom';
+// import { BrowserRouter } from 'react-router-dom';
 
 export interface MenuFunc {
     hide: Function;
@@ -141,22 +141,20 @@ const component = () => {
         anchorEl
     }) => {
         element.render(<StrictMode>
-            <BrowserRouter>
-                <ThemeProvider theme={theme}>
-                    <Menu
-                        anchorEl={anchorEl}
-                        key={key}
-                        open={open}
-                        onClose={closeOnOutside ? () => hide(key) : () => { }}
-                        className={`${isBlur ? "bg-blur" : ""}`}
-                        MenuListProps={{ className: "p-0" }}
-                    >
-                        <Box className={`bgs-menu ${className}`} sx={{ width, minWidth, maxWidth, height, minHeight, maxHeight }}>
-                            {children({ hide: () => hide(key), closeOnOutsideDisabled: () => closeOnOutsideDisabled(key) })}
-                        </Box>
-                    </Menu>
-                </ThemeProvider>
-            </BrowserRouter>
+            <ThemeProvider theme={theme}>
+                <Menu
+                    anchorEl={anchorEl}
+                    key={key}
+                    open={open}
+                    onClose={closeOnOutside ? () => hide(key) : () => { }}
+                    className={`${isBlur ? "bg-blur" : ""}`}
+                    MenuListProps={{ className: "p-0" }}
+                >
+                    <Box className={`bgs-menu ${className}`} sx={{ width, minWidth, maxWidth, height, minHeight, maxHeight }}>
+                        {children({ hide: () => hide(key), closeOnOutsideDisabled: () => closeOnOutsideDisabled(key) })}
+                    </Box>
+                </Menu>
+            </ThemeProvider>
         </StrictMode>)
     })
 }

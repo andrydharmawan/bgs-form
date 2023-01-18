@@ -8,7 +8,6 @@ import { ThemeProvider, Typography } from "@mui/material";
 import theme from "../config/theme";
 import { StrictMode } from "react";
 var element: ModalProps[] = [];
-import { BrowserRouter } from 'react-router-dom';
 
 export interface ModalFunc {
     hide: Function;
@@ -154,7 +153,7 @@ export function modalRef(name: string) {
     }
 }
 
-export function getComponentModal(){
+export function getComponentModal() {
     return element
 }
 
@@ -177,23 +176,21 @@ const component = () => {
         name
     }) => {
         element.render(<StrictMode>
-            <BrowserRouter>
-                <ThemeProvider theme={theme}>
-                    <Modal
-                        key={key}
-                        open={open}
-                        onClose={closeOnOutside ? () => hide(key) : () => { }}
-                        className={isBlur ? "bg-blur" : ""}
-                    >
-                        <Box key={name} className={`bgs-modal ${className}`} sx={{ width, minWidth, maxWidth, height, minHeight, maxHeight }}>
-                            {title ? <Typography className="p-2 ps-3 pe-3" variant="h6" component="h2">
-                                {title}
-                            </Typography> : null}
-                            {children({ hide: () => hide(key), closeOnOutsideDisabled: () => closeOnOutsideDisabled(key) })}
-                        </Box>
-                    </Modal>
-                </ThemeProvider>
-            </BrowserRouter>
+            <ThemeProvider theme={theme}>
+                <Modal
+                    key={key}
+                    open={open}
+                    onClose={closeOnOutside ? () => hide(key) : () => { }}
+                    className={isBlur ? "bg-blur" : ""}
+                >
+                    <Box key={name} className={`bgs-modal ${className}`} sx={{ width, minWidth, maxWidth, height, minHeight, maxHeight }}>
+                        {title ? <Typography className="p-2 ps-3 pe-3" variant="h6" component="h2">
+                            {title}
+                        </Typography> : null}
+                        {children({ hide: () => hide(key), closeOnOutsideDisabled: () => closeOnOutsideDisabled(key) })}
+                    </Box>
+                </Modal>
+            </ThemeProvider>
         </StrictMode>)
     })
 }
