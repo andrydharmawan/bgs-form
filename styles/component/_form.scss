@@ -1,0 +1,15 @@
+.MuiFormHelperText-root.Mui-error {
+    // position: absolute !important;
+    // top: 46px !important;
+    color: #d32f2f;
+    margin-top: 3px !important;
+    line-height: 10px !important;
+}
+.MuiInputLabel-root{
+    .MuiInputLabel-asterisk{
+        color: #d32f2f;
+    }
+}
+.MuiFormControl-root{
+    margin: 0px !important;
+}

@@ -1,0 +1,42 @@
+input,
+textarea {
+    min-height: 27px !important;
+}
+// input:-webkit-autofill,
+// input:-webkit-autofill:hover,
+// input:-webkit-autofill:focus,
+// input:-webkit-autofill:active {
+//     -webkit-box-shadow: 0 0 0 30px white inset !important;
+// }
+.MuiFormControl-root {
+    &.bgs-input {
+        .MuiInputLabel-root {
+            top: 3px !important;
+        }
+        .MuiOutlinedInput-root.MuiInputBase-root {
+            padding-right: 3px !important;
+        }
+    }
+    &.bgs-textarea {
+        .MuiInputLabel-root {
+            top: 3px !important;
+        }
+        .MuiOutlinedInput-root {
+            padding: 12px 14px 5px !important;
+        }
+    }
+}
+.no-label-floating {
+    .MuiFormLabel-root.MuiInputLabel-root.MuiInputLabel-shrink {
+        display: none !important;
+        transition: 0.2s;
+    }
+    .MuiOutlinedInput-root.no-label-input {
+        fieldset {
+            top: 0px !important;
+            legend {
+                display: none !important;
+            }
+        }
+    }
+}

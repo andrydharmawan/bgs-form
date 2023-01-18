@@ -1,0 +1,466 @@
+@use "sass:math";
+// @import "~bootstrap/scss/bootstrap";/* autoprefixer: off */
+@import "./config/all", "./component/all";
+@import "./dx-icon/font.scss";
+
+body {
+    font-family: "Roboto";
+    font-size: $fs-regular !important;
+    overflow: hidden;
+}
+
+a:hover {
+    color: inherit !important;
+}
+
+p {
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+.MuiPaper-root.container-main-body {
+    height: calc(100vh - 70px);
+    margin-top: 70px;
+    .content-body {
+        min-height: calc(100vh - 123px) !important;
+    }
+    border-radius: 0px !important;
+    // background-color: #f9fcff;
+    background-color: #eee;
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color 0.1s;
+    &:hover {
+        scrollbar-color: black transparent;
+    }
+    // &:not(:hover)::-webkit-scrollbar-thumb {
+    //     background: transparent;
+    // }
+    &::-webkit-scrollbar {
+        width: 13px;
+        // background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        border-radius: 2px;
+        background: #c1c1c1;
+    }
+}
+
+legend {
+    margin-bottom: 0px !important;
+}
+
+.loading-form {
+    &::after {
+        background: #00000091;
+        content: "";
+        display: block;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        border-radius: 5px;
+        position: absolute;
+        // margin-top: 8px;
+    }
+    .loading-container {
+        overflow: hidden;
+        border-radius: 10px;
+        width: 200px;
+        height: 100px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9;
+        user-select: none;
+    }
+}
+.error-form {
+    &::after {
+        background: #00000091;
+        content: "";
+        display: block;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        border-radius: 5px;
+        position: absolute;
+        -webkit-filter: blur(1px);
+        backdrop-filter: blur(7px);
+        z-index: 1;
+    }
+    .error-container {
+        overflow: hidden;
+        border-radius: 10px;
+        min-width: 200px;
+        height: 100px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        padding-left: 20px;
+        padding-right: 20px;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        z-index: 9;
+        user-select: none;
+    }
+}
+.loading-table {
+    .loading-container {
+        overflow: hidden;
+        border-radius: 10px;
+        width: 200px;
+        height: 100px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9;
+        user-select: none;
+    }
+}
+
+@for $i from 0 through 900 {
+    .fs-#{$i} {
+        font-size: $i + px !important;
+    }
+    .pd-#{$i} {
+        padding: $i + px !important;
+    }
+    .pdt-#{$i} {
+        padding-top: $i + px !important;
+    }
+    .pdb-#{$i} {
+        padding-bottom: $i + px !important;
+    }
+    .pdl-#{$i} {
+        padding-left: $i + px !important;
+    }
+    .pdlm-#{$i} {
+        padding-left: -$i + px !important;
+    }
+    .pdr-#{$i} {
+        padding-right: $i + px !important;
+    }
+    .mg-#{$i} {
+        margin: $i + px !important;
+    }
+    .mgt-#{$i} {
+        margin-top: $i + px !important;
+    }
+    .mgb-#{$i} {
+        margin-bottom: $i + px !important;
+    }
+    .mgl-#{$i} {
+        margin-left: $i + px !important;
+    }
+    .mglm-#{$i} {
+        margin-left: -$i + px !important;
+    }
+    .mgr-#{$i} {
+        margin-right: $i + px !important;
+    }
+    .hg-#{$i} {
+        height: $i + px !important;
+    }
+    .min-hg-#{$i} {
+        min-height: $i + px !important;
+    }
+    .max-hg-#{$i} {
+        max-height: $i + px !important;
+    }
+    .wt-#{$i} {
+        width: $i + px !important;
+    }
+    .min-wt-#{$i} {
+        min-width: $i + px !important;
+    }
+    .max-wt-#{$i} {
+        max-width: $i + px !important;
+    }
+    .zi-#{$i} {
+        z-index: $i !important;
+    }
+    .bw-#{$i} {
+        border-width: $i + px !important;
+        border-style: solid !important;
+    }
+    .bwt-#{$i} {
+        border-top-width: $i + px !important;
+        border-style: solid !important;
+    }
+    .bwt-#{$i} {
+        border-bottom-width: $i + px !important;
+        border-style: solid !important;
+    }
+    .bwr-#{$i} {
+        border-right-width: $i + px !important;
+        border-style: solid !important;
+    }
+    .bwl-#{$i} {
+        border-left-width: $i + px !important;
+        border-style: solid !important;
+    }
+    .br-#{$i} {
+        border-radius: $i + px !important;
+    }
+    .br-tl-#{$i} {
+        border-top-left-radius: $i + px !important;
+    }
+    .br-tr-#{$i} {
+        border-top-right-radius: $i + px !important;
+    }
+    .br-bl-#{$i} {
+        border-bottom-left-radius: $i + px !important;
+    }
+    .br-br-#{$i} {
+        border-bottom-right-radius: $i + px !important;
+    }
+    .lh-#{$i} {
+        line-height: $i + px !important;
+    }
+    .bw-#{$i} {
+        border-width: $i + px !important;
+    }
+    .fx-#{$i} {
+        flex: $i !important;
+    }
+    .top-percent-#{$i} {
+        top: round(percentage(math.div($i, 100))) !important;
+    }
+    .top-#{$i} {
+        top: $i + px !important;
+    }
+    .fw-#{$i} {
+        font-weight: $i !important;
+    }
+}
+.fw-bold {
+    font-weight: bold;
+}
+.fw-bolder {
+    font-weight: bolder;
+}
+.fw-lighter {
+    font-weight: lighter;
+}
+.swal2-container {
+    z-index: 99999999999999999 !important;
+}
+
+.swal2-popup.swal2-toast {
+    padding: 10px 20px !important;
+}
+.swal2-popup.swal2-toast .swal2-title {
+    margin: 0.5em 1em -4px !important;
+}
+
+.scroll {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color 0.8s;
+    padding-right: -10px !important;
+    &:hover {
+        scrollbar-color: black transparent;
+    }
+    &:not(:hover)::-webkit-scrollbar-thumb {
+        background: transparent;
+    }
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        background: transparent;
+    }
+    // &:hover::-webkit-scrollbar {
+    //     width: 8px;
+    //     height: 8px;
+    //     background: transparent;
+    // }
+    &::-webkit-scrollbar-thumb {
+        border-radius: 2px;
+        background: #c1c1c1;
+    }
+}
+
+.transparant {
+    opacity: 0;
+}
+.transparant:hover {
+    opacity: 100;
+}
+
+@media (min-width: 768px) {
+    .row-cols-7 .col-2 {
+        width: 100%;
+        *width: 100%;
+    }
+}
+
+@media (min-width: 992px) {
+    .row-cols-7 .col-2 {
+        width: 14.285714285714285714285714285714%;
+        *width: 14.285714285714285714285714285714%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .row-cols-7 .col-2 {
+        width: 14.285714285714285714285714285714%;
+        *width: 14.285714285714285714285714285714%;
+    }
+}
+
+.row-search {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    .col-search {
+        &div {
+            width: 100%;
+        }
+        &:nth-child(1) {
+            width: 49%;
+        }
+        &:nth-child(2) {
+            width: 1%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        &:nth-child(3) {
+            width: 49%;
+        }
+    }
+}
+.action-hover {
+    cursor: pointer;
+    user-select: none;
+    &:hover {
+        background-color: #eee;
+    }
+    &:active,
+    &:focus {
+        background-color: rgb(216, 215, 215);
+    }
+}
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.menu-sub.MuiModal-root {
+    .MuiBackdrop-root{
+        display: none !important;
+    }
+    z-index: 200 !important;
+    .MuiPaper-root{
+        z-index: 300 !important;
+    }
+}
+
+.time-bgs {
+    .MuiFormControl-root.bgs-input .MuiOutlinedInput-root.MuiInputBase-root {
+        background-color: #fff !important;
+    }
+    .datetime-bgs {
+        .MuiPickerStaticWrapper-content,
+        .MuiPaper-root {
+            box-shadow: none !important;
+            background-color: transparent !important;
+            form {
+                .row > div {
+                    &:nth-child(2),
+                    &:nth-child(3) {
+                        &::after {
+                            content: ":";
+                            position: relative;
+                            top: -33px;
+                            left: -9px;
+                        }
+                    }
+                }
+            }
+        }
+        .MuiClockPicker-root {
+            background-color: #e6e6e6;
+            div {
+                // &:nth-child(2){
+                //     padding-top: 39px !important;
+                // }
+                > div:first-child {
+                    background-color: #fff !important;
+                }
+            }
+        }
+    }
+    .MuiPickersToolbar-root {
+        padding: 0px !important;
+        .MuiPickersArrowSwitcher-root {
+            right: 1px !important;
+            top: 8px !important;
+        }
+    }
+    .MuiPickersToolbar-root,
+    .MuiDialogActions-root {
+        .MuiTypography-root,
+        .MuiGrid-root {
+            display: none !important;
+        }
+    }
+}
+
+.table-cresa {
+    .bgs-toolbar {
+        .no-label-floating {
+            .MuiOutlinedInput-root {
+                background-color: #f1f3f4 !important;
+            }
+            fieldset.MuiOutlinedInput-notchedOutline {
+                border-color: #f1f3f4;
+            }
+        }
+    }
+}
+
+.search-type {
+    .bgs-select {
+        .MuiFormControl-root {
+            .MuiInputLabel-root {
+                top: -4px !important;
+                // top: 2px !important;
+                &.MuiInputLabel-shrink {
+                    top: 2px !important;
+                }
+            }
+            .MuiOutlinedInput-root {
+                // padding: 0px 10px 0px !important;
+                // padding: 0px 10px 0px !important;
+                align-items: center !important;
+                display: flex !important;
+                height: 30px !important;
+                max-height: 30px !important;
+                padding-right: 4px !important;
+            }
+        }
+    }
+}

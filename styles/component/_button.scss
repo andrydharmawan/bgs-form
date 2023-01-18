@@ -1,0 +1,97 @@
+.MuiButton-root {
+    // line-height: 2 !important;
+
+    // line-height: 2.5 !important;
+    max-height: 44px;
+    text-transform: none !important;
+    &.yellow-500 {
+        background-color: $yellow-500 !important;
+        &:hover {
+            background-color: $yellow-500 !important;
+        }
+    }
+}
+
+.MuiButtonBase-root {
+    &.green-500 {
+        background-color: #71c49f !important;
+        color: #fff;
+        &:hover {
+            background-color: #52a37e !important;
+        }
+    }
+}
+
+.MuiButtonBase-root {
+    &.red-500 {
+        background-color: #db2828 !important;
+        color: #fff;
+        &:hover {
+            background-color: #db2828 !important;
+        }
+    }
+}
+
+.button-group {
+    span {
+        margin-right: 5px;
+        &:last-child {
+            margin-right: 0px;
+        }
+    }
+}
+
+.button-payment {
+    > span {
+        &:nth-child(1) {
+            margin-right: 20px;
+            .MuiButtonBase-root {
+                border: solid 1px #71c49f;
+                background-color: #d3fbed;
+                color: #71c49f;
+                max-height: 78px !important;
+                height: 78px !important;
+                border-radius: 7px !important;
+                &.active{
+                    background-color: #69eeb2;
+                    color: #ffffff;
+                }
+                .title {
+                    font-family: Roboto;
+                    font-size: 19px;
+                    font-weight: 600;
+                    font-stretch: normal;
+                    font-style: normal;
+                    line-height: 1.43;
+                    letter-spacing: 0.15px;
+                    text-align: left;
+                }
+            }
+        }
+        &:nth-child(2) {
+            margin-left: 20px;
+            .MuiButtonBase-root {
+                border: solid 1px #adc4d9;
+                background-color: #d2edffbf;
+                color: #1a81c5;
+                max-height: 78px !important;
+                border-radius: 7px !important;
+                height: 78px !important;
+                &.active{
+                    background-color: #74c5fc;
+                    color: #ffffff;
+                }
+                .title {
+                    font-family: Roboto;
+                    font-size: 19px;
+                    font-weight: 600;
+                    font-stretch: normal;
+                    font-style: normal;
+                    line-height: 1.43;
+                    letter-spacing: 0.15px;
+                    text-align: left;
+                }
+            }
+        }
+    }
+}

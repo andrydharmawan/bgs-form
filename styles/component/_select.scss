@@ -1,0 +1,27 @@
+.bgs-select {
+    .MuiFormControl-root {
+        .MuiInputLabel-root {
+            top: -4px !important;
+            // top: 2px !important;
+            &.MuiInputLabel-shrink {
+                top: 2px !important;
+            }
+        }
+        .MuiOutlinedInput-root {
+            // padding: 0px 10px 0px !important;
+            // padding: 0px 10px 0px !important;
+            align-items: center !important;
+            display: flex !important;
+            height: 44px !important;
+            max-height: 44px !important;
+        }
+    }
+}
+
+.bgs-search-select {
+    .MuiFormControl-root {
+        .MuiInputLabel-root {
+            top: 2px !important;
+        }
+    }
+}

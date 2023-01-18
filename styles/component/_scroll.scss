@@ -1,0 +1,55 @@
+// ::-webkit-scrollbar {
+//     width: 7px;
+//     height: 7px;
+// }
+// ::-webkit-scrollbar-button {
+//     display: none;
+// }
+// ::-webkit-scrollbar-track {
+//     background-color: inherit !important;
+// }
+// ::-webkit-scrollbar-track-piece {
+//     background-color: inherit !important;
+// }
+// ::-webkit-scrollbar-thumb {
+//     cursor: pointer;
+//     background-color: inherit;
+//     &:hover{
+//         height: 50px;
+//         background-color: $light-grey;
+//         border-radius: 36px;
+//     }
+// }
+
+.content {
+    padding: 17px 0 17px 17px;
+    width: 300px;
+    height: 200px;
+    overflow-y: scroll;
+    mask-image: linear-gradient(to top, transparent, black), linear-gradient(to left, transparent 17px, black 17px);
+    mask-size: 100% 20000px;
+    mask-position: left bottom;
+    -webkit-mask-image: linear-gradient(to top, transparent, black),
+        linear-gradient(to left, transparent 17px, black 17px);
+    -webkit-mask-size: 100% 20000px;
+    -webkit-mask-position: left bottom;
+    transition: mask-position 0.3s, -webkit-mask-position 0.3s;
+}
+
+.content:hover {
+    -webkit-mask-position: left top;
+}
+
+@keyframes background {
+    from {
+        background: pink;
+    }
+    to {
+        background: #c0d6ff;
+    }
+}
+
+.wrapper {
+    float: left;
+    animation: background 5s infinite alternate;
+}
