@@ -238,33 +238,17 @@ const BgsSelect = forwardRef(({
                     }
                 });
             }
+            const searcha = {
+                ...param.criteria,
+                ...search && searchOptions ? searchby : null,
+                ...defaultFilter.criteria
+            }
             const { status, data, paging, message }: ResponseModel = await helper({
-                parameter: {
-                    column: [],
-                    ...param,
-                    criteria: {
-                        ...param.criteria,
-                        ...search && searchOptions ? searchby : null,
-                        ...defaultFilter.criteria
-                    },
-                    filter: {
-                        ...param.filter,
-                        ...defaultFilter.filter
-                    },
-                    data: {
-                        ...param.data,
-                        ...defaultFilter.data
-                    },
-                    sort: {
-                        ...sort,
-                        ...defaultFilter.sort
-                    }
-                },
-                paging: {
-                    limit: limitState,
-                    page: pageState
-                }
+                limit: limitState,
+                page: pageState,
+                search: searcha.search
             })
+
             const { totalrecord = 0, totalpage = 0 } = paging || {};
             setTotalRecordState(totalrecord)
             setTotalPageState(totalpage)
@@ -319,18 +303,13 @@ const BgsSelect = forwardRef(({
                     } = editorOptions || {};
                     if (helper && valueExpr) {
                         if (loading) return;
-                        let { status, data }: ResponseModel = await helper({
-                            parameter: {
-                                column: [],
-                                filter: {
-                                    [valueExpr]: defaultValue
-                                }
-                            },
-                            paging: {
-                                limit: limitState,
-                                page: 1
-                            }
+
+                        let { status, data, paging, message }: ResponseModel = await helper({
+                            limit: limitState,
+                            page: 1,
+                            [`filter[${valueExpr}]`]: defaultValue 
                         })
+
                         if (status && isArray(data, 0)) {
                             data = data.map(remapDataSource);
                             setDataSelected([data[0]])
@@ -355,6 +334,8 @@ const BgsSelect = forwardRef(({
                     } = editorOptions || {};
                     if (helper && valueExpr) {
                         if (loading) return;
+
+                        
                         let { status, data }: ResponseModel = await helper({
                             parameter: {
                                 column: [],
@@ -367,6 +348,7 @@ const BgsSelect = forwardRef(({
                                 page: 1
                             }
                         })
+                        
                         if (status && isArray(data, 0)) {
                             data = data.map(remapDataSource);
                             setDataSelected(data)
@@ -546,7 +528,7 @@ const BgsSelect = forwardRef(({
                 const { status, data, message }: ResponseModel = await helper({
                     limit: totalRecordState,
                     page: 1,
-                    search: searcha.search
+                    search: searcha.search,
                 })
                 setLoading(false)
                 // setIsNew(false)
