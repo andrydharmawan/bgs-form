@@ -246,7 +246,7 @@ const BgsSelect = forwardRef(({
             const { status, data, paging, message }: ResponseModel = await helper({
                 limit: limitState,
                 page: pageState,
-                search: searcha.search
+                search: searcha.search || ""
             })
 
             const { totalrecord = 0, totalpage = 0 } = paging || {};
@@ -307,7 +307,7 @@ const BgsSelect = forwardRef(({
                         let { status, data, paging, message }: ResponseModel = await helper({
                             limit: limitState,
                             page: 1,
-                            [`filter[${valueExpr}]`]: defaultValue 
+                            [`filter[${valueExpr}]`]: defaultValue || ""
                         })
 
                         if (status && isArray(data, 0)) {
@@ -337,16 +337,9 @@ const BgsSelect = forwardRef(({
 
                         
                         let { status, data }: ResponseModel = await helper({
-                            parameter: {
-                                column: [],
-                                filter: {
-                                    [valueExpr]: defaultValue
-                                }
-                            },
-                            paging: {
-                                limit: limitState,
-                                page: 1
-                            }
+                            limit: limitState,
+                            page: 1,
+                            [`filter[${valueExpr}]`]: defaultValue || ""
                         })
                         
                         if (status && isArray(data, 0)) {
@@ -528,7 +521,7 @@ const BgsSelect = forwardRef(({
                 const { status, data, message }: ResponseModel = await helper({
                     limit: totalRecordState,
                     page: 1,
-                    search: searcha.search,
+                    search: searcha.search || "",
                 })
                 setLoading(false)
                 // setIsNew(false)
