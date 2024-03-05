@@ -56,12 +56,12 @@ const BgsSummaryValidation = forwardRef(({
                 try {
                     const find: any = findDataFieldOnGroup(field)
                     if (find && group && group[find]) if ((group[find] as any)?.setFocus) (group[find] as any)?.setFocus()
-                    setTimeout(() => formControl.formState.errors[field].ref?.focus())
+                    setTimeout(() => (formControl.formState.errors[field]?.ref as any)?.focus())
                 } catch (error) {
 
                 }
             }}>
-                <div className="dx-item-content dx-validationsummary-item-content">{formControl.formState.errors[field].message}</div>
+                <div className="dx-item-content dx-validationsummary-item-content">{(formControl.formState.errors[field] as any)?.message}</div>
             </div>))}
         </div>
     </>

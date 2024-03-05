@@ -48,7 +48,7 @@ const BgsSwitch = forwardRef(({
             fieldState: { invalid, error },
         }) => (
             <FormControl error={invalid}>
-                {labelVisible ? <FormLabel component="legend"><BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} /></FormLabel> : null}
+                {labelVisible ? <FormLabel component="legend"><BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} editorOptions={editorOptions} formControl={formControl} dataField={dataField} /></FormLabel> : null}
                 <FormControlLabel control={
                     <Switch
                         value={dataType === "number" ? (value ? true : false) : value}

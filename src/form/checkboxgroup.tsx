@@ -47,7 +47,6 @@ const BgsCheckboxGroup = forwardRef(({
         disabled,
         readOnly,
         visible = visibleItem,
-        isAlwaysNew,
         onChange: onChangeOptions = () => { }
     } = editorOptions || {};
     const { control, getValues, watch, setValue } = formControl;
@@ -57,6 +56,7 @@ const BgsCheckboxGroup = forwardRef(({
     const [pageState, setPageState] = useState<number>(1);
     const [limitState, setLimitState] = useState<number>(50);
     const [totalRecordState, setTotalRecordState] = useState<number>(0);
+    // @ts-ignore
     const [loading, setLoading] = useState<boolean>(false);
     const [valueState, setValueState] = useState<string[]>(defaultValue || []);
 
@@ -150,10 +150,10 @@ const BgsCheckboxGroup = forwardRef(({
             control={control}
             rules={!visible || disabled || readOnly ? {} : validationRules(validation, item, formControl, formRef)}
             render={({
-                field: { onChange, onBlur, value = [] },
+                field: { onBlur, value = [] },
                 fieldState: { invalid, error },
             }) => (<FormControl error={invalid} component="fieldset" variant="standard">
-                {labelVisible ? <FormLabel component="legend"><BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} /></FormLabel> : null}
+                {labelVisible ? <FormLabel component="legend"><BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} editorOptions={editorOptions} formControl={formControl} dataField={dataField} /></FormLabel> : null}
                 <FormGroup row={!(editorOptions?.aligned === "vertical")}>
                     {dataSourceState.map(({ displayExpr, valueExpr, data }, index) => <FormControlLabel
                         key={index}
@@ -162,6 +162,7 @@ const BgsCheckboxGroup = forwardRef(({
                             checked={value.includes(valueExpr)}
                             disabled={disabled}
                             readOnly={readOnly}
+                            // @ts-ignore
                             onChange={(event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
                                 let valueCp = jsonCopy(valueState);
 

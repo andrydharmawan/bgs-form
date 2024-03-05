@@ -5,7 +5,7 @@ import { v4 } from "uuid";
 import FormControl from "@mui/material/FormControl";
 import React, { useImperativeHandle, forwardRef } from "react";
 import moment from "moment";
-import BgsTypography from "../typography/typography";
+import Typography from "@mui/material/Typography";
 
 const BgsLabel = forwardRef(({
     name,
@@ -74,15 +74,15 @@ const BgsLabel = forwardRef(({
             <FormControl className="w-100">
                 {visible ? <div className={`w-100`}>
                     {aligned === "vertical" ? <>
-                        <BgsTypography className={`text-secondary ${!label?.className?.includes("fs-") ? " fs-13 " : ""} ${label?.className}`}>{label?.text || ""}</BgsTypography>
-                        <BgsTypography className={`${className} min-hg-23 w-100 ${!className?.includes("fs-") ? " fs-13 " : ""} ${className}`} loading={loading}>{prefix}{formatText(value)}{suffix}</BgsTypography>
+                        <Typography className={`text-secondary ${!label?.className?.includes("fs-") ? " fs-13 " : ""} ${label?.className}`}>{label?.text || ""}</Typography>
+                        <Typography className={`${className} min-hg-23 w-100 ${!className?.includes("fs-") ? " fs-13 " : ""} ${className}`}>{prefix}{formatText(value)}{suffix}</Typography>
                     </> : <>
                         <div className="row">
                             <div className="col-md-5">
-                                <BgsTypography className={`text-secondary ${!label?.className?.includes("fs-") ? " fs-13 " : ""} ${label?.className}`}>{label?.text || ""}</BgsTypography>
+                                <Typography className={`text-secondary ${!label?.className?.includes("fs-") ? " fs-13 " : ""} ${label?.className}`}>{label?.text || ""}</Typography>
                             </div>
                             <div className="col-md-7">
-                                <BgsTypography className={`min-hg-23 w-100 ${!className?.includes("fs-") ? " fs-13 " : ""} ${className}`} loading={loading}>: {prefix}{formatText(value)}{suffix}</BgsTypography>
+                                <Typography className={`min-hg-23 w-100 ${!className?.includes("fs-") ? " fs-13 " : ""} ${className}`}>: {prefix}{formatText(value)}{suffix}</Typography>
                             </div>
                         </div>
                     </>}

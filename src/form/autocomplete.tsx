@@ -8,10 +8,8 @@ import BgsSpinner from "./spinner";
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import Tooltip from "@mui/material/Tooltip";
 import InputAdornment from "@mui/material/InputAdornment";
-import BgsButton from "./button";
 import { TextField } from "@mui/material";
 import React from "react";
-import ClearIcon from '@mui/icons-material/Clear';
 import Autocomplete from '@mui/material/Autocomplete';
 import { BgsLabel } from "./input";
 
@@ -50,6 +48,7 @@ const BgsAutoComplete = forwardRef(({
         readOnly,
         visible = visibleItem,
         parameterFromField,
+        // @ts-ignore
         isFirstLoad = true,
         search: searchOptions,
         sorting,
@@ -219,6 +218,7 @@ const BgsAutoComplete = forwardRef(({
                     page: pageState
                 }
             })
+            // @ts-ignore
             const { totalrecord = 0 } = paging || {};
             const dataSrc = status && isArray(data, 0) ? data.map(remapDataSource) : [];
             setDataSourceState(status ? isNew ? dataSrc : [...dataSourceState, ...dataSrc] : [])
@@ -269,6 +269,7 @@ const BgsAutoComplete = forwardRef(({
                 <Autocomplete
                     freeSolo
                     options={dataSourceState.map(x => x.displayExpr)}
+                    // @ts-ignore
                     onChange={(event, newValue) => {
                         const data = dataSourceState.find(x => x.valueExpr === newValue)
                         onChangeOptions({
@@ -321,7 +322,7 @@ const BgsAutoComplete = forwardRef(({
                             onChange(event)
                         }}
                         {...labelVisible ? {
-                            label: <BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} />
+                            label: <BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} editorOptions={editorOptions} formControl={formControl} dataField={dataField} />
                         } : { label: "" }}
                         InputLabelProps={{
                             ...params.InputLabelProps,

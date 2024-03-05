@@ -1,4 +1,3 @@
-import ReactDOM from "react-dom";
 import { v4 } from "uuid"
 import Snackbar from "@mui/material/Snackbar";
 import React from "react";
@@ -42,6 +41,14 @@ const hide = (key: string) => {
         component();
     })
 };
+
+export function clearSnackbar() {
+    element = element.map(item => {
+        item.open = false;
+        return item
+    });
+    component();
+}
 
 export default function bgsSnackbar({
     render: children,
@@ -92,13 +99,14 @@ const component = () => {
         children,
         element,
         vertical = "bottom",
-        horizontal = "left"
+        horizontal = "left",
+        duration = 2000
     }) => element.render(
         children
             ? <Snackbar
                 key={key}
                 open={open}
-                autoHideDuration={2000}
+                autoHideDuration={duration}
                 onClose={() => hide(key)}
                 message={message}
                 action={action as any}
@@ -108,7 +116,7 @@ const component = () => {
             : <Snackbar
                 key={key}
                 open={open}
-                autoHideDuration={2000}
+                autoHideDuration={duration}
                 onClose={() => hide(key)}
                 message={message}
                 action={action as any}

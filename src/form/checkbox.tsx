@@ -66,7 +66,7 @@ const BgsCheckbox = forwardRef(({
                     />
                 }
                     {...labelVisible ? {
-                        label: <BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} />
+                        label: <BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} editorOptions={editorOptions} formControl={formControl} dataField={dataField} />
                     } : { label: "" }}
                 />
                 <FormHelperText>{error?.message || label?.hint}</FormHelperText>

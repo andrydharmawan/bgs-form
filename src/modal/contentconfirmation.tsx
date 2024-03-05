@@ -1,9 +1,8 @@
 import Typography from "@mui/material/Typography";
-import { ModalFunc } from "./modal";
 import BgsButton from "../form/button";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { ModalConfirmation } from "./modalconfirmation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import React from "react";
 
 export default function ContentConfirmation({

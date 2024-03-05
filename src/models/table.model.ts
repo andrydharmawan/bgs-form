@@ -62,10 +62,17 @@ export interface Columns {
     className?: string | null | undefined;
     headerClassName?: string | null | undefined;
     truncateText?: boolean;
-    icon?: HeaderIcon
+    icon?: HeaderIcon;
+    actionCode?: string;
+    onClick?: (e: OnRowClick) => any;
+    searchOptions?: {
+        mapping?: (value: string) => string;
+        prefixValue?: string;
+        suffixValue?: string;
+    }
 }
 
-export type HeaderIcon = boolean | "boolean" | "key" | "list" | "image" | "date" | "url" | "tree" | "mail" | "hastag" | "browse" | "text" | "user" | "lock" | "search"
+export type HeaderIcon = boolean | "boolean" | "key" | "list" | "image" | "date" | "url" | "tree" | "mail" | "hastag" | "browse" | "text" | "user" | "lock" | "search" | "phone" | "time"
 
 interface AllowSelection extends Columns {
     enabled?: boolean;
@@ -90,6 +97,7 @@ interface OnRowClick {
     columns: Columns;
     rowData: any;
     rowIndex: number;
+    event: React.MouseEvent<HTMLElement>;
 }
 
 export default interface TableModel<T = any> {
@@ -128,6 +136,9 @@ export default interface TableModel<T = any> {
     searchFocus?: boolean;
     searchInput?: SearchInput;
     onRowPrepared?: (props: OnRowPrepared) => OnRowPreparedResult;
+    actionCode?: string;
+    dataExpr?: string;
+    afterRefresh?: (data: any) => void;
 }
 
 interface OnRowPrepared {
@@ -166,6 +177,7 @@ export interface BgsTableBodyProps {
     setSelectionDataState: (value: any) => any;
     criteriaState: any;
     onRowPrepared: (props: OnRowPrepared) => OnRowPreparedResult;
+    actionCode?: string;
 }
 
 export interface BgsTableHeaderProps {
@@ -202,6 +214,7 @@ export interface BgsTableHeaderProps {
     selectAll: boolean;
     setSelectAll: (value: boolean) => any;
     setColumnsState: (columns: Columns[]) => any;
+    dataExpr?: string;
 }
 
 export interface BgsTableFooterProps {
@@ -217,8 +230,9 @@ export interface BgsTableFooterProps {
     tableRef: TableRef;
 }
 
-interface AllowSearchingProps {
+export interface AllowSearchingProps {
     fullWidth?: boolean;
+    enabled?: boolean;
 }
 
 export interface BgsTableToolbarProps {
@@ -244,6 +258,7 @@ export interface BgsTableToolbarProps {
     openSidebar: boolean;
     setOpenSidebar: (value: boolean) => void;
     searchFocus?: boolean;
+    columnsState: Columns[];
 }
 export interface BgsTableSidebarProps {
     limitState: number;
@@ -267,6 +282,7 @@ export interface BgsTableSidebarProps {
     setBetweenState: (value: any) => any;
     betweenDuplicateState: any;
     setBetweenDuplicateState: (value: any) => any;
+    dataExpr?: string;
 }
 
 interface ItemsButtonMod extends ItemsButton {

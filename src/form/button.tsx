@@ -2,7 +2,7 @@ import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { FormRef, Items, MenuRef, ModalOptions } from "../models/form.model";
+import { FormRef, Items, MenuRef } from "../models/form.model";
 import BgsModalConfirmation, { ModalConfirmation } from "../modal/modalconfirmation";
 import Tooltip from "@mui/material/Tooltip";
 import { SxProps } from "@mui/material/styles";
@@ -10,8 +10,9 @@ import Skeleton from "@mui/material/Skeleton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import React from "react";
-import bgsConfigureStore, { ConfigureStore } from "../store";
+import useRouter from "../lib/router";
 import CircularProgress from "@mui/material/CircularProgress";
+import ListItemIcon from "@mui/material/ListItemIcon";
 
 interface ActionDefaultButton {
     loading: (value: boolean) => any;
@@ -25,7 +26,7 @@ interface ModalRef {
     closeOnOutsideDisabled: (value: boolean) => any;
 }
 
-interface PropsFormButton {
+export interface PropsFormButton {
     item?: Items;
     formControl?: UseFormReturn;
     indexKey?: number;
@@ -52,6 +53,8 @@ interface PropsFormButton {
     visibleLoading?: boolean;
     actionCode?: string;
     menuCode?: string;
+    text?: string;
+    component?: "button" | "menu-item";
 }
 
 interface MenuOptions {
@@ -74,24 +77,15 @@ interface MenuOptionsItems {
     modalOptions?: ModalConfirmation;
 }
 
-const BgsButton = ({ menuCode: menuCodeDefault, visibleLoading = true, modalOptions: modalOptionsDefault, menuOptions: menuOptionsDefault, skeleton, sx: sxDefault, title: titleDefault, withoutParentDisabled: withoutParentDisabledDefault, loading: loadingDefault, actionType: actionTypeDefault, to: toDefault, className: classNameDefault, item, formControl, formRef, children, disabled: disabledDefault, onClick: onClickDefault = () => { }, color: colorDefault, size: sizeDefault, variant: variantDefault, type: typeDefault, suffix: suffixDefault, prefix: prefixDefault, visible: visibleDefault, actionCode }: PropsWithChildren<PropsFormButton>): any => {
-    const { accessRoles = [], menu }: ConfigureStore = bgsConfigureStore.getState();
+const BgsButton = ({ component = "button", visibleLoading = true, modalOptions: modalOptionsDefault, menuOptions: menuOptionsDefault, skeleton, sx: sxDefault, title: titleDefault, withoutParentDisabled: withoutParentDisabledDefault, loading: loadingDefault, actionType: actionTypeDefault, to: toDefault, className: classNameDefault, item, formControl, formRef, children, disabled: disabledDefault, onClick: onClickDefault = () => { }, color: colorDefault, size: sizeDefault, variant: variantDefault, type: typeDefault, suffix: suffixDefault, prefix: prefixDefault, visible: visibleDefault, text: textDefault }: PropsWithChildren<PropsFormButton>): any => {
     // console.log(accessRoles, actionCode, "accessRoles-button")
-
-    if (menuCodeDefault && actionCode) {
-        const data = menu.find(x => x.menuCode === menuCodeDefault && x.details.map(y => y.functionCode).includes(actionCode));
-        if (!data?.details.map(x => x.functionCode).includes(actionCode)) return;
-    }
-    else {
-        if (actionCode) if (!accessRoles.includes(actionCode)) return;
-    }
-
     const { editorOptions } = item || {};
+    const router = useRouter();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     let {
         onClick = onClickDefault,
-        text = "",
+        text = textDefault || "",
         className = classNameDefault,
         disabled = disabledDefault,
         size = sizeDefault || "medium",
@@ -116,11 +110,13 @@ const BgsButton = ({ menuCode: menuCodeDefault, visibleLoading = true, modalOpti
     const [menuOutsideClose, setMenuOutsideClose] = useState<boolean>(true)
 
     const clickDefault = (event: React.MouseEvent<HTMLElement>) => {
+        if (to && router) router.push(to);
+
         if (actionType === "modal") {
             BgsModalConfirmation({
                 props: formRef,
                 ...modalOptions,
-                onClick: (e) => onClick({
+                onClick: (e: any) => onClick({
                     event,
                     loading: (value) => loadingAction(value),
                     ...e as any,
@@ -145,12 +141,14 @@ const BgsButton = ({ menuCode: menuCodeDefault, visibleLoading = true, modalOpti
 
     const clickMenuItems = (event: React.MouseEvent<HTMLElement>, { to, actionType, onClick = () => { }, modalOptions }: MenuOptionsItems, index: number) => {
         let onClickAny: any = onClick;
+        if (to && router) router.push(to);
+
         if (actionType === "modal") {
             handleMenuClose();
             BgsModalConfirmation({
                 props: formRef,
                 ...modalOptions,
-                onClick: (e) => onClickAny({
+                onClick: (e: any) => onClickAny({
                     event,
                     loading: (value: any) => setLoadingStateMenu(value ? [...loadingStateMenu, index] : loadingStateMenu.filter(x => x !== index)),
                     ...e as any,
@@ -207,8 +205,7 @@ const BgsButton = ({ menuCode: menuCodeDefault, visibleLoading = true, modalOpti
         className={menuOptions?.className || ""}
     >
         {menuOptions?.items.map((props, index) => {
-            const { text, suffix = () => { }, prefix = () => { }, actionCode, className = "" } = props;
-            if (actionCode) if (!accessRoles.includes(actionCode)) return;
+            const { text, suffix = () => { }, prefix = () => { }, className = "" } = props;
             return <MenuItem className={className} disabled={loadingStateMenu.includes(index)} key={index} onClick={e => clickMenuItems(e, props as any, index)}>{loadingStateMenu.includes(index) ? <CircularProgress size={20} color="inherit" /> : null} {typeof prefix === "function" ? prefix() : prefix} {text} {typeof suffix === "function" ? suffix() : suffix}</MenuItem>
         })}
     </Menu>
@@ -217,15 +214,50 @@ const BgsButton = ({ menuCode: menuCodeDefault, visibleLoading = true, modalOpti
         {prefix}{children || text}{suffix}
     </>
 
-    if (variant === "icon") {
-        return <Tooltip title={title || text} disableHoverListener={title ? false : true}>
+    if (component === "menu-item") {
+        return <MenuItem
+            className={className}
+            disabled={disabled || loadingState}
+            onClick={clickDefault}
+            sx={sx}
+        >
+            {(prefix || loadingState) && <ListItemIcon>
+                {loadingState ? <CircularProgress size={20} color="inherit" /> : (typeof prefix === "function" ? prefix() : prefix)}
+            </ListItemIcon>}
+            {children || text}{suffix} {typeof suffix === "function" ? suffix() : suffix}
+        </MenuItem>
+    }
+    else {
+        if (variant === "icon") {
+            return <Tooltip title={title || text} disableHoverListener={title ? false : true}>
+                <span className={className?.includes("w-100") ? "w-100" : ""}>
+                    {skeleton && loading
+                        ? <Skeleton className={className} />
+                        : <IconButton
+                            type={type as any}
+                            color={color}
+                            size={size}
+                            disabled={disabled || loadingState}
+                            onClick={clickDefault}
+                            className={className}
+                            sx={sx}
+                        >
+                            {loadingState ? <CircularProgress size={20} color="inherit" /> : null}
+                            {!visibleLoading ? !loadingState && <TemplateButton /> : <TemplateButton />}
+                        </IconButton>}
+                    {MenuComponent}
+                </span>
+            </Tooltip>
+        }
+        else return <Tooltip title={title || text} disableHoverListener={title ? false : true}>
             <span className={className?.includes("w-100") ? "w-100" : ""}>
                 {skeleton && loading
                     ? <Skeleton className={className} />
-                    : <IconButton
+                    : <Button
                         type={type as any}
                         color={color}
                         size={size}
+                        variant={variant}
                         disabled={disabled || loadingState}
                         onClick={clickDefault}
                         className={className}
@@ -233,31 +265,11 @@ const BgsButton = ({ menuCode: menuCodeDefault, visibleLoading = true, modalOpti
                     >
                         {loadingState ? <CircularProgress size={20} color="inherit" /> : null}
                         {!visibleLoading ? !loadingState && <TemplateButton /> : <TemplateButton />}
-                    </IconButton>}
+                    </Button>}
                 {MenuComponent}
             </span>
         </Tooltip>
     }
-    else return <Tooltip title={title || text} disableHoverListener={title ? false : true}>
-        <span className={className?.includes("w-100") ? "w-100" : ""}>
-            {skeleton && loading
-                ? <Skeleton className={className} />
-                : <Button
-                    type={type as any}
-                    color={color}
-                    size={size}
-                    variant={variant}
-                    disabled={disabled || loadingState}
-                    onClick={clickDefault}
-                    className={className}
-                    sx={sx}
-                >
-                    {loadingState ? <CircularProgress size={20} color="inherit" /> : null}
-                    {!visibleLoading ? !loadingState && <TemplateButton /> : <TemplateButton />}
-                </Button>}
-            {MenuComponent}
-        </span>
-    </Tooltip>
 }
 
 export default BgsButton;

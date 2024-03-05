@@ -4,11 +4,9 @@ import { createRoot } from 'react-dom/client';
 import Modal from "@mui/material/Modal";
 import { v4 } from "uuid"
 import Box from '@mui/material/Box';
-import { ThemeProvider, Typography } from "@mui/material";
-import theme from "../config/theme";
-import { StrictMode } from "react";
+import { Typography } from "@mui/material";
+
 var element: ModalProps[] = [];
-import { BrowserRouter } from 'react-router-dom';
 
 export interface ModalFunc {
     hide: Function;
@@ -153,7 +151,7 @@ export function modalRef(name: string) {
     }
 }
 
-export function getComponentModal(){
+export function getComponentModal() {
     return element
 }
 
@@ -175,24 +173,18 @@ const component = () => {
         isBlur,
         name
     }) => {
-        element.render(<StrictMode>
-            <BrowserRouter>
-                <ThemeProvider theme={theme}>
-                    <Modal
-                        key={key}
-                        open={open}
-                        onClose={closeOnOutside ? () => hide(key) : () => { }}
-                        className={isBlur ? "bg-blur" : ""}
-                    >
-                        <Box key={name} className={`bgs-modal ${className}`} sx={{ width, minWidth, maxWidth, height, minHeight, maxHeight }}>
-                            {title ? <Typography className="p-2 ps-3 pe-3" variant="h6" component="h2">
-                                {title}
-                            </Typography> : null}
-                            {children({ hide: () => hide(key), closeOnOutsideDisabled: () => closeOnOutsideDisabled(key) })}
-                        </Box>
-                    </Modal>
-                </ThemeProvider>
-            </BrowserRouter>
-        </StrictMode>)
+        element.render(<Modal
+            key={key}
+            open={open}
+            onClose={closeOnOutside ? () => hide(key) : () => { }}
+            className={isBlur ? "bg-blur" : ""}
+        >
+            <Box key={name} className={`bgs-modal ${className}`} sx={{ width, minWidth, maxWidth, height, minHeight, maxHeight }}>
+                {title ? <Typography className="p-2 ps-3 pe-3" variant="h6" component="h2">
+                    {title}
+                </Typography> : null}
+                {children({ hide: () => hide(key), closeOnOutsideDisabled: () => closeOnOutsideDisabled(key) })}
+            </Box>
+        </Modal>)
     })
 }

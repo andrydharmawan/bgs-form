@@ -1,8 +1,7 @@
 import moment from "moment";
-import { useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { v4 } from "uuid";
-import { CallbackMounted, EditorOptions, FormRef, Items, ValidationRulesModel } from "../models/form.model";
+import { EditorOptions, FormRef, Items, ValidationRulesModel } from "../models/form.model";
 
 export function jsonCopy(data: any) {
     return data ? JSON.parse(JSON.stringify(data)) : null;
@@ -57,7 +56,18 @@ export const split = {
         }).join(" ")
         value = value.replace(/([a-z0-9])([A-Z])/g, '$1 $2');
         return value.charAt(0).toUpperCase() + value.slice(1);
-    }
+    },
+    snackCase: (value: string = "") => {
+        // @ts-ignore
+        const camelCase = value.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+
+        let camelWithSpaces = camelCase.replace(/([A-Z])/g, ' $1');
+
+        camelWithSpaces = camelWithSpaces.charAt(0).toUpperCase() + camelWithSpaces.slice(1);
+
+        return camelWithSpaces;
+    },
+    changeAll: (value: string = "") => split.snackCase(split.camelCase(value))
 }
 
 
@@ -67,7 +77,7 @@ export const validationRules = (validationRules: ValidationRulesModel[] = [], it
     let validate: any = {};
     const { label = {}, dataField, editorType, editorOptions } = item || {};
     const { mode } = editorOptions || {};
-    const { text = dataField ? split.camelCase(dataField) : "" } = label || {};
+    const { text = dataField ? split.changeAll(dataField) : "" } = label || {};
     const { getValues } = formControl;
 
 
@@ -208,13 +218,13 @@ export const validationRules = (validationRules: ValidationRulesModel[] = [], it
                 case "match":
                     validate = {
                         ...validate,
-                        match: (value: any = "") => value ? (value === getValues(valType[1]) || `${text} must be same with ${split.camelCase(valType[1])}`) : true,
+                        match: (value: any = "") => value ? (value === getValues(type.replace(`${valType[0]}.`, "")) || `${text} must be same with ${split.changeAll(valType[1])}`) : true,
                     }
                     break;
                 case "different":
                     validate = {
                         ...validate,
-                        different: (value: any = "") => value ? (!(value === getValues(valType[1])) || `${text} must be different with ${split.camelCase(valType[1])}`) : true,
+                        different: (value: any = "") => value ? (!(value === getValues(type.replace(`${valType[0]}.`, ""))) || `${text} must be different with ${split.changeAll(valType[1])}`) : true,
                     }
                     break;
                 case "pattern":
@@ -239,6 +249,10 @@ export const validationRules = (validationRules: ValidationRulesModel[] = [], it
                         pattern: new RegExp("^[0-9]*$"),
                         message: "must be format Number"
                     }
+                    else if (valType[1] == "numberwithcomma") pattern = {
+                        pattern: new RegExp("^\d*\.?\d*$"),
+                        message: "must be format Number"
+                    }
                     else if (valType[1] == "lowerspace") pattern = {
                         pattern: new RegExp("^[a-z0-9]*$"),
                         message: "must be format Lowercase and without space"
@@ -258,7 +272,7 @@ export const validationRules = (validationRules: ValidationRulesModel[] = [], it
 
                     validate = {
                         ...validate,
-                        pattern: (value: any = "") => pattern.pattern.test(value) || `${text} ${pattern.message}`,
+                        pattern: (value: any = "") => (!!value && pattern.pattern.test(value)) || `${text} ${pattern.message}`,
                     }
 
                     break;
@@ -382,7 +396,7 @@ export const recursiveReMapping = (formRef: FormRef, disabledForm: boolean, read
             }
         })
 
-        if (!propertyField?.label?.text && propertyField?.dataField) propertyField.label = { ...propertyField?.label, text: split.camelCase(propertyField?.dataField) }
+        if (!propertyField?.label?.text && propertyField?.dataField) propertyField.label = { ...propertyField?.label, text: split.changeAll(propertyField?.dataField) }
 
         return recursiveReMapping(formRef, disabledForm, readOnlyForm, propertyField, index, array, parent);
     }
@@ -406,7 +420,7 @@ export const recursiveReMapping = (formRef: FormRef, disabledForm: boolean, read
             let { label, dataField, editorOptions, validationRules = [], visible: visibleItem = typeof visibleGroup === "undefined" ? true : visibleGroup } = item;
             let { format, mode = "date", disabled = disabledGroup || false, readOnly = readOnlyGroup || false, visible = true } = editorOptions || {};
 
-            if (!label?.text && dataField) label = { text: split.camelCase(dataField), ...label }
+            if (!label?.text && dataField) label = { text: split.changeAll(dataField), ...label }
 
             visible = visibleItem;
 

@@ -10,6 +10,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Typography } from "@mui/material";
 import { v4 } from "uuid";
 import { getFieldValue, isArray, jsonCopy, overrideValue, split, validationRules } from "../lib";
+import useRouter from "../lib/router";
 import Grid from "@mui/material/Grid";
 
 const BgsForm = forwardRef(({
@@ -30,6 +31,8 @@ const BgsForm = forwardRef(({
     setFocus = () => { },
     showLabelShrink = false,
     showIcon = false,
+    actionCode,
+    menuCode: menuCodeDefault,
     ...others
 }: PropsWithChildren<FormModel>, ref: ForwardedRef<FormRef>) => {
     if (name && group) {
@@ -37,12 +40,13 @@ const BgsForm = forwardRef(({
             const im: any = group[name] || {};
             colCount = im.colCount || 1;
             spacing = im.spacing || 1;
-            items = im.items || [];
+            items = im.items.filter((x: any) => x !== undefined) || [];
             setFocus = im.setFocus || (() => { });
         }
     }
 
     useImperativeHandle(ref, () => formRef);
+    const router = useRouter();
 
     const [itemsStateOld, setItemsStateOld] = useState<Items[]>([]);
     const [itemsState, setItemsState] = useState<Items[]>([]);
@@ -68,21 +72,21 @@ const BgsForm = forwardRef(({
         readOnly: (value) => readOnly(value),
         btnSubmit: (value, type) => btnSubmit(value, type),
         setError: (message) => setErrorMessage(message),
-        to: value => {},
+        to: value => router.push(value),
         name
     }
 
     const { trigger, setValue, getValues, reset: resetdata, resetField, clearErrors, setError, unregister } = formControl;
 
     useEffect(() => {
-        if (isArray(items, 0) && items) setItemsState(items.map(recursiveReMapping))
+        if (isArray(items, 0) && items) setItemsState(items.filter(x => x !== undefined).map(recursiveReMapping))
     }, [])
 
     useEffect(() => {
         setItemsStateOld(itemsState.map(recursiveReMapping))
     }, [itemsState])
 
-    const recursiveReMapping = (item: string | Items | null, index?: number, array?: any, parent?: Items): Items => {
+    const recursiveReMapping = (item: string | Items | null | undefined, index?: number, array?: any, parent?: Items): Items => {
         if (typeof item === "string") {
             /** 
              * format String
@@ -137,11 +141,11 @@ const BgsForm = forwardRef(({
                 }
             })
 
-            if (!propertyField?.label?.text && propertyField?.dataField) propertyField.label = { ...propertyField?.label, text: split.camelCase(propertyField?.dataField) }
+            if (!propertyField?.label?.text && propertyField?.dataField) propertyField.label = { ...propertyField?.label, text: split.changeAll(propertyField?.dataField) }
 
             return recursiveReMapping(propertyField, index, array, parent);
         }
-        else if (item === null && typeof item === "object") {
+        else if ((item === null && typeof item === "object") || item === undefined) {
             return recursiveReMapping({
                 template: () => null
             }, index, array, parent);
@@ -154,7 +158,7 @@ const BgsForm = forwardRef(({
                 visible: visibleGroupMain,
                 disabled: disabledGroupMain,
                 readOnly: readOnlyGroupMain,
-                items: items.map((itemChild: any, index: number, array: any) => recursiveReMapping(itemChild, index, array, item))
+                items: items.filter(x => x !== undefined).map((itemChild: any, index: number, array: any) => recursiveReMapping(itemChild, index, array, item))
             }
             else {
                 let { disabled: disabledGroup = false, visible: visibleGroup = true, readOnly: readOnlyGroup = readOnlyForm || false } = parent || {};
@@ -165,7 +169,7 @@ const BgsForm = forwardRef(({
 
                 if (disabledGroup) disabled = disabledGroup;
 
-                if (!label?.text && dataField) label = { ...label, text: split.camelCase(dataField) }
+                if (!label?.text && dataField) label = { ...label, text: split.changeAll(dataField) }
 
                 visible = visibleItem;
 
@@ -302,7 +306,7 @@ const BgsForm = forwardRef(({
                 return <BgsComponentForm item={item} formControl={formControl} formRef={formRef} apperance={apperance} loading={loading} group={group} spacing={spacing} showLabelShrink={showLabelShrink} showIcon={showIcon} />
         }
     }
-
+    // @ts-ignore
     const colSpan = (item: any, colCount: any) => {
         const colSpan = Math.round((12 / colCount) * (item?.colSpan || 1));
         return colSpan === 1 ? `col` : `col-${colSpan}`
@@ -484,6 +488,7 @@ const BgsForm = forwardRef(({
                                 }
                             }
                             else {
+                                // @ts-ignore
                                 if (key.includes("validationRules") || key.includes("disabled") || key.includes("visible") || key.includes("readOnly")) unregister(field), setError(field, {
                                     type: "validate",
                                     types: validationRules(result.validationRules, result, formControl, formRef)

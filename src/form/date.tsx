@@ -6,7 +6,6 @@ import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import TextField from "@mui/material/TextField";
 import moment from "moment";
-import addWeeks from 'date-fns/addWeeks';
 import React, { useImperativeHandle, forwardRef, useState, useRef, useEffect } from "react";
 import InputAdornment from "@mui/material/InputAdornment";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -38,12 +37,8 @@ const BgsDate = forwardRef(({
     const { label, editorOptions, dataField = v4(), validationRules: validation = [], visible: visibleItem, editorType } = item;
     const labelVisible = typeof label?.visible === "undefined" ? true : label?.visible;
     const { control } = formControl;
+    // @ts-ignore
     let { format, views, openTo, minDate, maxDate, mode = "date", disabled, prefix, readOnly, visible = visibleItem, suffix, showArrow = true, positionIcon = "right", onChange: onChangeOptions = () => { } } = editorOptions || {};
-
-    const getWeeksAfter = (date: Date | null, amount: number) => {
-        //maxDate={getWeeksAfter(value[0], 4)}  ----------- sample using if date range disable date, disablePast = false
-        return date ? addWeeks(date, amount) : undefined;
-    }
 
     return <div className="bgs-date w-100">
         <Controller
@@ -59,6 +54,7 @@ const BgsDate = forwardRef(({
                         showLabelShrink={showLabelShrink}
                         ref={ref}
                         format={format}
+                        apperance={apperance}
                         mode={mode as any}
                         value={value}
                         readOnly={readOnly}
@@ -72,7 +68,7 @@ const BgsDate = forwardRef(({
                         className={editorOptions?.className || ""}
                         positionIcon={positionIcon}
                         allowClear={editorOptions?.allowClear}
-                        label={labelVisible ? <BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} /> : ""}
+                        label={labelVisible ? <BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} editorOptions={editorOptions} formControl={formControl} dataField={dataField} /> : ""}
                         onChange={(val: any) => {
                             onChange(val)
                             onChangeOptions({
@@ -122,7 +118,7 @@ interface DatePickerProps {
     className: string;
     ref: any;
     invalid: boolean;
-    showLabelShrink: boolean
+    showLabelShrink: boolean;
 }
 
 const formating = (mode: "date" | "datetime" | "time" | "daterange" | "month", value: any, type: "display" | "value" = "display") => {
@@ -475,7 +471,7 @@ export function BgsStaticTimePicker({ onChange, showInput, value: valueDefault, 
                     openTo="hours"
                     minTime={showInput ? (isNow ? reformatToMoment(minDate) : undefined) : reformatToMoment(minDate)}
                     maxTime={showInput ? (isNow ? reformatToMoment(maxDate) : undefined) : reformatToMoment(maxDate)}
-                    showToolbar={true}
+                    // showToolbar={true}
                     views={valueFormat.split(":").length > 2 ? ['hours', 'minutes', 'seconds'] : ['hours', 'minutes']}
                     value={value}
                     onChange={(newValue: any) => {
@@ -486,7 +482,6 @@ export function BgsStaticTimePicker({ onChange, showInput, value: valueDefault, 
 
                         if (btnNext.disabled && newValue) onChange(moment(newValue).format(valueFormat));
                     }}
-                    renderInput={(params: any) => <TextField {...params} />}
                 />
             </LocalizationProvider>
             <Paper className="p-2 br-0 ps-5 pe-5 shadow-none" sx={{ maxWidth: "320px" }}>
@@ -519,7 +514,7 @@ interface BgsDateRangeProps {
     disabledDates?: (moment.Moment | Date | string)[];
     mode: "date" | "datetime" | "time" | "daterange" | "month"
 }
-
+// @ts-ignore
 const BgsDateRange = ({ mode, valueFormat = "YYYY-MM-DD", displayFormat = "DD MMM YYYY", onChange = () => { }, value, hide, minDate, maxDate, disabledDates = [] }: BgsDateRangeProps) => {
     const formatValue = "YYYY-MM";
 
@@ -810,7 +805,9 @@ const DateComponent = ({ mode: modeInput, isMultiple = true, disabledDates = [],
             <Slide direction="up" in={mode === "year"} mountOnEnter unmountOnExit>
                 <Grid item xs={12}>
                     <Grid container columns={4} spacing={0} className="calender-year-bgs max-hg-300 scroll" style={{ overflowY: "auto" }}>
-                        {Children.toArray(Array(200).fill(null).map((val, index) => startYear + index).filter(year => !disabledYearRange(moment(year, "YYYY"))).map(year => <Grid item xs={1}>
+                        {
+                        // @ts-ignore
+                        Children.toArray(Array(200).fill(null).map((val, index) => startYear + index).filter(year => !disabledYearRange(moment(year, "YYYY"))).map(year => <Grid item xs={1}>
                             <BgsButton
                                 variant="outlined"
                                 onClick={() => {
@@ -872,7 +869,9 @@ const DateComponent = ({ mode: modeInput, isMultiple = true, disabledDates = [],
                         <Grid container columns={7} spacing={0} onMouseLeave={() => selectedStart && setHover(null)}>
                             {days.findIndex(x => x === startDay) === 0 ? null : <Grid className="b-0 bg-date-null" item xs={days.findIndex(x => x === startDay)}>
                             </Grid>}
-                            {Array(total).fill(null).map((x, index) => {
+                            {
+                            // @ts-ignore
+                            Array(total).fill(null).map((x, index) => {
                                 const day = moment(`${month}-${index + 1}`, `${formatValue}-DD`);
 
                                 return <Grid key={index} item xs={1} className={`

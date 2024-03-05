@@ -7,6 +7,8 @@ import BgsSpinner from "./spinner";
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Typography } from "@mui/material";
 import React from "react";
+import useRouter from "../lib/router";
+
 const BgsGroupForm = forwardRef(({
     formData = {},
     disabled: disabledForm = false,
@@ -19,9 +21,10 @@ const BgsGroupForm = forwardRef(({
     item,
     spacing = 1,
     showLabelShrink = false,
-    showIcon = false
+    showIcon = false,
 }: PropsWithChildren<FormGroupModel>, ref: ForwardedRef<FormRef>) => {
     useImperativeHandle(ref, () => formRef);
+    const router = useRouter();
     const formElement = useRef<HTMLFormElement>(null);
     let refGroup: { [x: string]: FormRef; } = {};
     let refGroupName: string[] = [];
@@ -66,6 +69,7 @@ const BgsGroupForm = forwardRef(({
                                         const valuesDefault = jsonCopy(getValues());
                                         item[name] = result;
                                         clearErrors(field);
+                                        // @ts-ignore
                                         if (key.includes("validationRules") || key.includes("disabled") || key.includes("visible") || key.includes("readOnly")) unregister(field), setError(field, {
                                             type: "validate",
                                             types: validationRules(result.validationRules, result, formControl, formRef)
@@ -95,7 +99,7 @@ const BgsGroupForm = forwardRef(({
         readOnly: (value) => readOnly(value),
         btnSubmit: (value, type) => btnSubmit(value, type),
         setError: (message) => setErrorMessage(message),
-        to: value => {}
+        to: value => router.push(value)
     }
 
     const { trigger, setValue, getValues, reset: resetdata, resetField, clearErrors, setError, unregister } = formControl;
@@ -182,6 +186,7 @@ const BgsGroupForm = forwardRef(({
         else resetdata()
     }
 
+    // @ts-ignore
     const btnSubmit = (value: boolean | string, type: "visible" | "disabled" | "text" | "loading" = "visible") => {
     }
 
@@ -238,7 +243,7 @@ const BgsGroupForm = forwardRef(({
     const submitForm = async () => {
         const isValid = await trigger();
         let values: any = getDataMapping(getValues());
-        if (process.env.BUILD_ID === "development") console.log(values, "values");
+        // if (process.env.BUILD_ID === "development") console.log(values, "values");
         if (isValid) {
             onSubmit(values, formRef)
         }

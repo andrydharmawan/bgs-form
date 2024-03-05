@@ -7,7 +7,6 @@ import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import LinearProgress from "@mui/material/LinearProgress";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import Tooltip from "@mui/material/Tooltip";
 import bgsSnackbar from "../snackbar/snackbar";
@@ -17,9 +16,13 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import Alert from "@mui/material/Alert";
 import { PropsForm, ResponseModel } from "../models/models";
-import { BgsButton, bgsModalConfirmation, BgsSpinner, BgsTypography } from "..";
 import BgsButtonGroup from "./buttongroup";
 import { BgsLabel } from "./input";
+import BgsButton from "./button";
+import bgsModalConfirmation from "../modal/modalconfirmation";
+import BgsSpinner from "./spinner";
+import Typography from "@mui/material/Typography";
+
 
 export interface BgsUploadProps {
     id: string;
@@ -138,6 +141,7 @@ const BgsUpload = forwardRef(({
             file,
             ...param
         }, undefined, {
+            // @ts-ignore
             onUploadProgress: (e: any) => {
                 // if (findIndex !== -1) listFileTemp[findIndex].progress = Math.ceil((e.loaded / e.total) * 100);
                 // setListFileTemp(listFileTemp)
@@ -390,13 +394,13 @@ const BgsUpload = forwardRef(({
             fieldState: { invalid, error },
         }) => (
             <FormControl error={invalid} component="fieldset" variant="standard" className="w-100 bgs-form-upload">
-                {labelVisible ? <FormLabel component="legend"><BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} /></FormLabel> : null}
+                {labelVisible ? <FormLabel component="legend"><BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} editorOptions={editorOptions} formControl={formControl} dataField={dataField} /></FormLabel> : null}
                 <div className={`bgs-container-upload position-relative w-100 ${disabled || readOnly ? "grayscale bg-grey-100" : ""}`}>
                     <div className="d-flex align-items-center p-3 ps-4 pe-4 br-10 w-100">
                         <CloudUploadOutlinedIcon className="text-secondary fs-30 bgs-icon-upload" />
                         <div className="ms-3 bgs-container-label-upload">
-                            <BgsTypography className="lh-18 fs-15 bgs-label-upload">Drop files to attach, or <span className="c-blue-300">browse</span></BgsTypography>
-                            <BgsTypography className="lh-18 fs-13 bgs-desc-upload text-secondary">{accept ? <span>Only <b>{accept}</b> files</span> : null} {maxSize ? <span>, Max size <b>{maxSize}MB</b></span> : null}</BgsTypography>
+                            <Typography className="lh-18 fs-15 bgs-label-upload">Drop files to attach, or <span className="c-blue-300">browse</span></Typography>
+                            <Typography className="lh-18 fs-13 bgs-desc-upload text-secondary">{accept ? <span>Only <b>{accept}</b> files</span> : null} {maxSize ? <span>, Max size <b>{maxSize}MB</b></span> : null}</Typography>
                         </div>
                     </div>
                     <TextField

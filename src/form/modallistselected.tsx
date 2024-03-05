@@ -6,11 +6,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { ModalFunc } from "../modal/modal";
 import { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import BgsTypography from "../typography/typography";
 import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import Badge from "@mui/material/Badge";
 import React from "react";
+import Typography from "@mui/material/Typography";
 
 interface DataSourceModel {
     displayExpr: string;
@@ -40,7 +40,7 @@ export default function ModalListSelected({ dataSelected, selected, onBlur, moda
         <>
             <div className="pt-2 pb-2 pe-2 ps-4 d-flex align-items-center justify-content-between">
                 <Badge badgeContent={dataSelectedState.length} color="primary">
-                    <BgsTypography className="fs-18 text-truncate max-wd-20">Data Selected</BgsTypography>
+                    <Typography className="fs-18 text-truncate max-wd-20">Data Selected</Typography>
                 </Badge>
                 <BgsButton onClick={() => modalOptions.hide()} variant="icon"><CloseIcon /></BgsButton>
             </div>

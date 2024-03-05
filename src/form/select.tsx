@@ -1,7 +1,7 @@
 import { FormRef, PropsForm } from "../models/form.model";
 import { Controller } from "react-hook-form";
 import { v4 } from "uuid";
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { Children, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { getFieldValue, isArray, jsonCopy, recursiveReMapping, validationRules } from "../lib";
 import { ResponseModel, TableModel } from "../models/models";
 import BgsSpinner from "./spinner";
@@ -10,7 +10,7 @@ import Tooltip from "@mui/material/Tooltip";
 import InputAdornment from "@mui/material/InputAdornment";
 import BgsButton from "./button";
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { Box, Checkbox, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Menu, TextField } from "@mui/material";
+import { Box, Checkbox, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, TextField } from "@mui/material";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import React from "react";
@@ -18,7 +18,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import Paper from "@mui/material/Paper";
 import Fade from '@mui/material/Fade';
 import bgsModal from "../modal/modal";
-import BgsTable from "../table/table";
 import ClearIcon from '@mui/icons-material/Clear';
 import { BgsLabel } from "./input";
 // import ModalListSelected from "./modallistselected";
@@ -57,7 +56,6 @@ const BgsSelect = forwardRef(({
         disabled,
         readOnly,
         visible = visibleItem,
-        isAlwaysNew,
         parameterFromField,
         afterChange,
         mode = "default",
@@ -85,7 +83,9 @@ const BgsSelect = forwardRef(({
     const [pageState, setPageState] = useState<number>(1);
     const [limitState, setLimitState] = useState<number>(50);
     const [totalRecordState, setTotalRecordState] = useState<number>(0);
+    const [totalPageState, setTotalPageState] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
+    const [loadingPage, setLoadingPage] = useState<number>(1);
     const [statusState, setStatusState] = useState<boolean>(true);
     const [messageError, setMessageError] = useState<string>("");
     const [search, setSearch] = useState<string | null>(null);
@@ -98,6 +98,8 @@ const BgsSelect = forwardRef(({
             if (dataSelected.length) {
                 const selectedFocus: any = document.querySelectorAll('.selected-item');
                 if (selectedFocus.length) selectedFocus[0]?.focus();
+                const findIndex = dataSourceState.findIndex(x => x.valueExpr === dataSelected[0].valueExpr);
+                setFocus(findIndex > -1 ? findIndex : 0)
             }
             setTimeout(() => {
                 refInput.current?.focus()
@@ -110,6 +112,7 @@ const BgsSelect = forwardRef(({
     }, [key])
 
     useEffect(() => {
+        setLoadingPage(pageState)
         if (mode === "default") {
             // if (isFirstLoad || key !== dataField || defaultValue) 
 
@@ -262,8 +265,9 @@ const BgsSelect = forwardRef(({
                     page: pageState
                 }
             })
-            const { totalrecord = 0 } = paging || {};
+            const { totalrecord = 0, totalpage = 0 } = paging || {};
             setTotalRecordState(totalrecord)
+            setTotalPageState(totalpage)
             const dataSrc = status && isArray(data, 0) ? data.map(remapDataSource) : [];
             setDataSourceState(status ? isNew ? dataSrc : [...dataSourceState, ...dataSrc] : [])
             setStatusState(status)
@@ -335,7 +339,10 @@ const BgsSelect = forwardRef(({
                         }
                     }
                 }
-                else if (findData) setOptionSelectedValue(!multiple ? findData : [findData])//update disini
+                else if (findData) {
+                    setOptionSelectedValue(!multiple ? findData : [findData])
+                    setDataSelected([findData])
+                }//update disini
             }
         }
         else {
@@ -404,7 +411,7 @@ const BgsSelect = forwardRef(({
     let timer: any = null;
 
     const [width, setWidth] = useState<number>(0);
-
+    // @ts-ignore
     const rounded = (val: number) => {
         const round = 500 * pageState;
         return Math.round(val / round) * round;
@@ -612,6 +619,7 @@ const BgsSelect = forwardRef(({
             width: "80%",
             minHeight: "70%",
             ...editorOptions?.modalOptions,
+            className: `bgs-select-modal`,
             render: ({ hide }) => {
                 const {
                     helper,
@@ -619,7 +627,7 @@ const BgsSelect = forwardRef(({
                     parameter,
                     valueExpr = ""
                 } = editorOptions || {};
-
+                // @ts-ignore
                 const table: TableModel = {
                     title: "Choose Data",
                     ...!multiple && {
@@ -677,11 +685,12 @@ const BgsSelect = forwardRef(({
                     } : null
                 }
                 return <div className="scroll p-3" style={{ height: "calc(100vh - 131px)", overflowX: "auto" }} >
-                    <BgsTable {...table as any} />
                 </div >
             }
         })
     }
+
+    const [focus, setFocus] = useState<number | undefined | null>(0);
 
     return <div className="bgs-select">
         <Controller
@@ -703,7 +712,7 @@ const BgsSelect = forwardRef(({
                                     error={invalid}
                                     inputRef={ref}
                                     {...labelVisible ? {
-                                        label: <BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} />
+                                        label: <BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} editorOptions={editorOptions} formControl={formControl} dataField={dataField} />
                                     } : { label: "" }}
                                     helperText={error?.message || label?.hint}
                                     // variant="outlined"
@@ -755,7 +764,7 @@ const BgsSelect = forwardRef(({
                                                     data: null,
                                                     formRef
                                                 })
-
+                                                setDataSelected([])
                                                 setOptionSelectedValue(null)
 
                                                 if (afterChange?.clearItems?.length) formRef.reset(afterChange?.clearItems);
@@ -818,6 +827,25 @@ const BgsSelect = forwardRef(({
                                             backgroundColor: "transparent"
                                         }
                                     }}
+                                    onKeyDown={(e) => {
+                                        if (e.keyCode === 38 && typeof focus === "number") {
+                                            const index = focus === 0 ? (dataSourceState.length - 1) : focus - 1;
+                                            setFocus(index)
+                                        }
+                                        else if (e.keyCode === 40 && typeof focus === "number") {
+                                            const index = focus >= (dataSourceState.length - 1) ? 0 : focus + 1;
+                                            setFocus(index)
+                                        }
+                                        else if (e.keyCode === 35 && typeof focus === "number") {
+                                            setFocus(dataSourceState.length - 1)
+                                        }
+                                        else if (e.keyCode === 36 && typeof focus === "number") {
+                                            setFocus(0)
+                                        }
+                                        else {
+                                            refInput.current?.focus()
+                                        }
+                                    }}
                                     PaperProps={{
                                         style: {
                                             width: width + 1,
@@ -830,14 +858,14 @@ const BgsSelect = forwardRef(({
                                         }
                                     }}>
                                     {searchOptions
-                                        ? <ListSubheader className="p-0 bgs-search-select" disableGutters sx={{ backgroundColor: "transparent" }}>
+                                        ? <Box className="p-0 bgs-search-select" sx={{ backgroundColor: "transparent" }}>
                                             <TextField
                                                 autoFocus
                                                 fullWidth
                                                 inputProps={{
                                                     ref: refInput,
                                                 }}
-                                                label={<BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} />}
+                                                label={<BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} editorOptions={editorOptions} formControl={formControl} dataField={dataField} />}
                                                 size="small"
                                                 sx={{ backgroundColor: "#fff" }}
                                                 variant={apperance}
@@ -848,7 +876,24 @@ const BgsSelect = forwardRef(({
                                                 }}
                                                 // onBlur={() => setTimeout(() => { setIsNew(true), setSearch(null) }, 1000)}
                                                 onKeyDown={e => {
-                                                    if (e.keyCode === 27) popupState.close();
+                                                    if (e.keyCode === 38 && typeof focus === "number") {
+                                                        const index = focus === 0 ? (dataSourceState.length - 1) : focus - 1;
+                                                        setFocus(index)
+                                                    }
+                                                    else if (e.keyCode === 40 && typeof focus === "number") {
+                                                        const index = focus >= (dataSourceState.length - 1) ? 0 : focus + 1;
+                                                        setFocus(index)
+                                                    }
+                                                    else if (e.keyCode === 35 && typeof focus === "number") {
+                                                        setFocus(dataSourceState.length - 1)
+                                                    }
+                                                    else if (e.keyCode === 36 && typeof focus === "number") {
+                                                        setFocus(0)
+                                                    }
+                                                    else if (e.keyCode === 27) popupState.close();
+                                                    else {
+                                                        refInput.current?.focus()
+                                                    }
                                                     e.stopPropagation()
                                                 }}
                                                 placeholder={`Search ${label?.text}`}
@@ -863,7 +908,7 @@ const BgsSelect = forwardRef(({
                                                     shrink: true,
                                                 }}
                                             />
-                                        </ListSubheader>
+                                        </Box>
                                         : null}
                                     {(allowSelectAll && multiple) && <Paper
                                         className="shadow"
@@ -926,10 +971,17 @@ const BgsSelect = forwardRef(({
                                                 borderRadius: allowSelectAll ? "0px" : "6px 6px 0px 0px"
                                             }
                                         }}
-                                        onScroll={(event: React.SyntheticEvent) => {
-                                            const listboxNode = event.currentTarget;
-                                            if ((!loading && (dataSourceState.length < totalRecordState)) && listboxNode.scrollTop + listboxNode.clientHeight === listboxNode.scrollHeight) {
-                                                setPageState(pageState + 1);
+                                        onScroll={(event) => {
+                                            // const listboxNode = event.currentTarget;
+                                            // if ((!loading && (dataSourceState.length < totalRecordState)) && listboxNode.scrollTop + listboxNode.clientHeight === listboxNode.scrollHeight) {
+                                            //     setPageState(pageState + 1);
+                                            // }
+
+                                            const { scrollTop = 0, offsetHeight = 0, scrollHeight = 0 } = event.currentTarget || {};
+                                            const end = scrollTop + offsetHeight < scrollHeight - 20;
+                                            const page = loadingPage + 1;
+                                            if (!loading && (pageState < totalPageState) && end) {
+                                                setPageState(page);
                                             }
                                         }}
                                     >
@@ -949,7 +1001,7 @@ const BgsSelect = forwardRef(({
                                             </svg>
                                             <Box sx={{ color: "#D9D9D9" }}>No Data</Box>
                                         </Box> : null}
-                                        {dataSourceState.map(({ displayExpr, valueExpr, data }, index) => {
+                                        {Children.toArray(dataSourceState.map(({ displayExpr, valueExpr, data }, index) => {
                                             const labelId = `checkbox-list-label-${valueExpr}`;
 
                                             const selected = ({ valueExpr, displayExpr, data, popupState }: { valueExpr: string, displayExpr: string, data: any, popupState?: any }) => {
@@ -993,10 +1045,12 @@ const BgsSelect = forwardRef(({
 
                                             return (
                                                 <ListItem
-                                                    key={index}
+                                                    // key={index}
                                                     disablePadding={true}
-                                                    tabIndex={0}
-                                                    className={!multiple ? (value === valueExpr ? "selected-item" : "") : (isArray(value, 0) ? (value.includes(valueExpr) ? "selected-item" : "") : "")}
+                                                    // selected={focus === index}
+                                                    tabIndex={1}
+                                                    autoFocus={focus === index}
+                                                    className={`bgs-list-item ${!multiple ? (value === valueExpr ? "selected-item" : "") : (isArray(value, 0) ? (value.includes(valueExpr) ? "selected-item" : "") : "")}`}
                                                     // selected={value === valueExpr}
                                                     disabled={!valueExpr || dataDisabledSelected.includes(valueExpr)}
                                                     onKeyDown={(e) => {
@@ -1033,7 +1087,7 @@ const BgsSelect = forwardRef(({
                                                         </ListItemButton>}
                                                 </ListItem>
                                             );
-                                        })}
+                                        }))}
                                     </Paper>
                                     {multiple && <div className="p-2 bg-white d-flex justify-content-between" style={{ boxShadow: "rgb(0 0 0 / 36%) -2px 9px 9px 0px", borderTop: "1px solid #e6e6e6", borderRadius: "0px 0px 6px 6px" }}>
                                         <div>

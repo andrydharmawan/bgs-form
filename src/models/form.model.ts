@@ -178,6 +178,9 @@ export interface EditorOptions {
     maxNumber?: number;
     maxLength?: number;
     autoComplete?: string;
+    showSuffixWhenFocus?: boolean;
+    showPrefixWhenFocus?: boolean;
+    disabledCopyPaste?: boolean;
 }
 
 interface BeforeUpload {
@@ -293,6 +296,8 @@ export interface Label {//Specifies properties for the form item label.
     showColon?: boolean;
     className?: string;
     icon?: HeaderIcon;
+    suffix?: string | Function;
+    prefix?: string | Function;
 }
 
 export interface ItemsButton {
@@ -405,7 +410,7 @@ export interface Items {
     label?: Label;//Specifies properties for the form item label.
     editorType?: TypeInput;//Specifies which editor UI component is used to display and edit the form item value.
     name?: string;//Specifies a name that identifies the form item.
-    items?: (Items | string | null)[];//Holds an array of form items.
+    items?: (Items | string | null | undefined)[];//Holds an array of form items.
     disabled?: boolean;
     readOnly?: boolean;
     className?: string;
@@ -431,7 +436,7 @@ export default interface FormModel<T = any> {
     disabled?: boolean;//Specifies whether the UI component responds to user interaction.
     readOnly?: boolean;//Specifies whether the UI component responds to user interaction.
     className?: string;//Specifies a CSS class to be applied to the form item.
-    items?: (Items | string | null)[];//Holds an array of form items.
+    items?: (Items | string | null | undefined)[];//Holds an array of form items.
     onSubmit?: (data: T, formRef: FormRef) => any;//handling submit form
     formGroup?: any;
     name?: string;
@@ -442,6 +447,8 @@ export default interface FormModel<T = any> {
     group?: ChildFormGroup<T>;
     showLabelShrink?: boolean;
     showIcon?: boolean;
+    actionCode?: string;
+    menuCode?: string;
 }
 
 interface FormGroupChildren {
@@ -466,14 +473,16 @@ export interface FormGroupModel<T = any> {
     spacing?: number;//The count of columns in the form layout.
     showLabelShrink?: boolean;
     showIcon?: boolean;
+    actionCode?: string;
+    menuCode?: string;
 }
 
 interface ChildFormGroup<T = any> {
-    [x: string]: FormModel<T> | (Items | string | null);
+    [x: string]: FormModel<T> | (Items | string | null | undefined);
 }
 
 export interface ResItemOption {
-    option: (key?: string, value?: string | Items | EditorOptions | FormatModel | boolean | number | null) => ResOption;
+    option: (key?: string, value?: string | Items | EditorOptions | FormatModel | boolean | number | null | undefined) => ResOption;
 }
 
 interface DataSourceSelectModel {

@@ -1,6 +1,4 @@
-export { default as BgsTable } from "./table/table";
-export { default as BgsTypography } from "./typography/typography";
-export { default as bgsSnackbar } from "./snackbar/snackbar";
+export { default as bgsSnackbar, clearSnackbar } from "./snackbar/snackbar";
 export type { SnackbarFunc, SnackbarModel } from "./snackbar/snackbar";
 export { default as bgsModalConfirmation } from "./modal/modalconfirmation";
 export { default as bgsModal, clearModal, modalRef, getComponentModal } from "./modal/modal";
@@ -11,5 +9,5 @@ export { default as BgsComponentForm } from "./form/component";
 export { default as BgsSpinner } from "./form/spinner";
 export { default as BgsForm } from "./form/form";
 export * from "./models/models";
-export * from "./store";
-export { default as BgsDraggableList } from "./table/component/DraggableList";
+export { default as useRouter } from "./lib/router";
+export type { BgsRouterProps } from "./lib/router";

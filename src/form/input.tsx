@@ -1,16 +1,13 @@
 import TextField from "@mui/material/TextField";
-import { Label, PropsForm, TypeInput, ValidationRulesModel } from "../models/form.model";
-import { Controller } from "react-hook-form";
+import { EditorOptions, Label, PropsForm, TypeInput, ValidationRulesModel } from "../models/form.model";
+import { Controller, UseFormReturn } from "react-hook-form";
 import { v4 } from "uuid";
 import { recursiveReMapping, validationRules } from "../lib";
-import React, { useImperativeHandle, ChangeEvent, forwardRef } from "react";
+import React, { useImperativeHandle, ChangeEvent, forwardRef, useEffect, useState } from "react";
 import { IMaskInput } from 'react-imask';
-import NumberFormat from 'react-number-format';
 import InputAdornment from "@mui/material/InputAdornment";
 import { BgsButton } from "..";
 import ClearIcon from '@mui/icons-material/Clear';
-import { IconHeader } from "../table/header";
-import { HeaderIcon } from "../models/table.model";
 
 const TextMaskCustom = forwardRef<HTMLElement, any>(
     function TextMaskCustom(props, ref) {
@@ -37,35 +34,10 @@ const TextMaskCustom = forwardRef<HTMLElement, any>(
 );
 
 const NumberFormatCustom = forwardRef<any, any>(
-    function NumberFormatCustom(props, ref) {
-
-        const {
-            onChange,
-            thousandSeparator = ".",
-            decimalSeparator = ",",
-            isNumericString = true,
-            prefix,//sample "Rp. "
-            ...other
-        } = props;
-
+    function NumberFormatCustom() {
         return (
-            <NumberFormat
-                {...other}
-                getInputRef={ref}
-                onValueChange={(values) => {
-                    onChange({
-                        target: {
-                            name: props.name,
-                            value: values.value,
-                        },
-                    });
-                }}
-                thousandSeparator={thousandSeparator}
-                decimalSeparator={decimalSeparator}
-                isNumericString={isNumericString}
-                prefix={prefix}
-            />
-        );
+            <></>
+        )
     },
 );
 
@@ -73,37 +45,13 @@ interface BgsLabelIconProps {
     showIcon: boolean;
     label: Label | undefined;
     editorType: TypeInput;
+    editorOptions?: EditorOptions;
 }
 
-export const BgsLabelIcon = ({ showIcon, label, editorType }: BgsLabelIconProps) => {
-    if (label?.icon) return <IconHeader icon={label?.icon} />
+export const BgsLabelIcon = ({ showIcon }: BgsLabelIconProps) => {
 
     if (showIcon) {
-        let icon: HeaderIcon = "text"
-        switch (editorType) {
-            case "date":
-                icon = "date"
-                break;
-            case "upload":
-                icon = "image"
-                break;
-            case "select":
-                icon = "list"
-                break;
-            case "autocomplete":
-                icon = "list"
-                break;
-            case "checkbox":
-                return <></>
-            case "checkboxgroup":
-                return <></>
-            case "radiobutton":
-                return <></>
-            case "switch":
-                return <></>
-        }
-
-        return <IconHeader icon={icon} />
+        return <></>
     }
 
     return <></>
@@ -114,15 +62,41 @@ interface BgsLabelProps {
     label: Label | undefined;
     editorType: TypeInput;
     validation?: ValidationRulesModel[];
+    editorOptions?: EditorOptions;
+    formControl: UseFormReturn;
+    dataField?: string;
 }
 
 export const BgsLabel = ({
-    label, showIcon, editorType, validation = []
+    label, showIcon, editorType, validation = [], editorOptions, formControl, dataField
 }: BgsLabelProps) => {
+
+    let { text = "" } = editorOptions || {};
+
+    let { suffix, prefix } = label || {};
+
+    const { watch } = formControl;
+
+    if (typeof suffix === "function") suffix = suffix();
+
+    if (typeof prefix === "function") prefix = prefix();
+
+    if (dataField) useEffect(() => {
+        if (typeof suffix === "function") suffix = suffix();
+
+        if (typeof prefix === "function") prefix = prefix();
+    }, [watch(dataField)])
+
+    if (typeof text === "function") text = text();
+
     return <span className={`bgs-label d-flex align-items-center bgs-editor-${editorType} ${label?.className || ""}`}>
-        <BgsLabelIcon editorType={editorType} label={label} showIcon={showIcon} />
-        {label?.text}
-        {((label?.showColon === undefined || label?.showColon) && validation.includes("required")) && <sup className="text-danger">*</sup>}
+        <>
+            {prefix}
+            <BgsLabelIcon editorType={editorType} label={label} showIcon={showIcon} editorOptions={editorOptions} />
+            {text || label?.text}
+            {editorType !== "checkbox" && (((label?.showColon === undefined || label?.showColon) && validation.includes("required")) && <sup className="text-danger">*</sup>)}
+            {suffix}
+        </>
     </span>
 }
 
@@ -152,7 +126,7 @@ const BgsInput = forwardRef(({
     const { label, editorOptions, dataField = v4(), validationRules: validation = [], editorType, visible: visibleItem } = item;
     const labelVisible = typeof label?.visible === "undefined" ? true : label?.visible;
     const { control } = formControl;
-    let { autoComplete, allowClear = false, placeholder, textAlignment: textAlign = "left", rows = editorType === "textarea" ? 2 : undefined, maxRows, minRows, multiline: multiple = false, type, suffix, prefix, disabled, readOnly, format, visible = visibleItem, onChange: onChangeItem = () => { }, onClick: onClickItem = () => { }, minNumber, maxNumber, maxLength } = editorOptions || {};
+    let { disabledCopyPaste, autoComplete, allowClear = false, placeholder, textAlignment: textAlign = "left", rows = editorType === "textarea" ? 2 : undefined, maxRows, minRows, multiline: multiple = false, type, suffix, prefix, disabled, readOnly, format, visible = visibleItem, onChange: onChangeItem = () => { }, onClick: onClickItem = () => { }, minNumber, maxNumber, maxLength, showPrefixWhenFocus = false, showSuffixWhenFocus = false } = editorOptions || {};
     const { mode, ...otherFormat } = format || {}
 
     const multiline = editorType === "textarea" || multiple;
@@ -160,6 +134,8 @@ const BgsInput = forwardRef(({
     if (typeof suffix === "function") suffix = suffix();
 
     if (typeof prefix === "function") prefix = prefix();
+    const [showSuffix, setShowSuffix] = useState<boolean>(!showSuffixWhenFocus)
+    const [showPrefix, setShowPrefix] = useState<boolean>(!showPrefixWhenFocus)
 
     return <Controller
         name={dataField}
@@ -174,7 +150,7 @@ const BgsInput = forwardRef(({
                 value={value}
                 inputRef={ref}
                 {...labelVisible ? {
-                    label: <BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} />
+                    label: <BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} editorOptions={editorOptions} formControl={formControl} dataField={dataField} />
                 } : { label: "" }}
                 fullWidth
                 variant={apperance}
@@ -200,13 +176,28 @@ const BgsInput = forwardRef(({
                         data: null
                     });
                 }}
-                onBlur={onBlur}
+                onFocus={() => {
+                    if (showPrefixWhenFocus) setShowPrefix(true)
+
+                    if (showSuffixWhenFocus) setShowSuffix(true)
+                }}
+                onBlur={() => {
+                    if (showPrefixWhenFocus) setShowPrefix(false)
+
+                    if (showSuffixWhenFocus) setShowSuffix(false)
+
+                    onBlur()
+                }}
                 error={invalid}
                 disabled={disabled}
                 InputLabelProps={showLabelShrink ? {
                     shrink: true,
                 } : {}}
                 InputProps={{
+                    ...disabledCopyPaste && {
+                        onCopy: (e) => e.preventDefault(),
+                        onPaste: (e) => e.preventDefault(),
+                    },
                     autoComplete,
                     ...mode === "mask" ? { inputComponent: TextMaskCustom as any } : null,
                     ...mode === "number" ? { inputComponent: NumberFormatCustom as any } : null,
@@ -223,8 +214,8 @@ const BgsInput = forwardRef(({
                     },
                     className: `${editorOptions?.className}`,
                     readOnly,
-                    ...prefix ? { startAdornment: <InputAdornment position="start">{prefix}</InputAdornment> } : null,//<InputAdornment position="start">kg</InputAdornment>
-                    ...suffix ? {
+                    ...prefix && (value || showPrefix) ? { startAdornment: <InputAdornment position="start">{prefix}</InputAdornment> } : null,//<InputAdornment position="start">kg</InputAdornment>
+                    ...suffix && (value || showSuffix) ? {
                         endAdornment: <InputAdornment position="end">
                             {allowClear && value ? <BgsButton variant="icon" onClick={() => {
                                 formRef.reset(dataField)

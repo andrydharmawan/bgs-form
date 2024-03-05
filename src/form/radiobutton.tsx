@@ -51,6 +51,7 @@ const BgsRadioButton = forwardRef(({
     const [pageState, setPageState] = useState<number>(1);
     const [limitState, setLimitState] = useState<number>(50);
     const [totalRecordState, setTotalRecordState] = useState<number>(0);
+    // @ts-ignore
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
@@ -144,7 +145,7 @@ const BgsRadioButton = forwardRef(({
             }) => (
                 <FormControl component="fieldset" error={invalid} disabled={disabled || readOnly}>
                     {labelVisible ?
-                        <FormLabel component="legend"><BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} /></FormLabel>
+                        <FormLabel component="legend"><BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} editorOptions={editorOptions} formControl={formControl} dataField={dataField}/></FormLabel>
                         : null}
                     <RadioGroup
                         aria-label={dataField}

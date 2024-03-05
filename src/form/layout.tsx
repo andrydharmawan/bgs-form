@@ -13,7 +13,7 @@ const BgsLayoutForm = ({ item, formControl, indexKey, formRef, apperance, loadin
                 return <BgsComponentForm item={item} formControl={formControl} formRef={formRef} apperance={apperance} loading={loading} group={group} spacing={spacing} showLabelShrink={showLabelShrink} showIcon={showIcon} />
         }
     }
-
+// @ts-ignore
     const colSpan = (item: any, colCount: any) => {
         const colSpan = Math.round((12 / colCount) * (item?.colSpan || 1));
         return colSpan === 1 ? `col` : `col-${colSpan}`
