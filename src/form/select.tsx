@@ -537,32 +537,16 @@ const BgsSelect = forwardRef(({
                         }
                     });
                 }
+
+                const searcha = {
+                    ...param.criteria,
+                    ...search && searchOptions ? searchby : null,
+                    ...defaultFilter.criteria
+                }
                 const { status, data, message }: ResponseModel = await helper({
-                    parameter: {
-                        column: [],
-                        ...param,
-                        criteria: {
-                            ...param.criteria,
-                            ...search && searchOptions ? searchby : null,
-                            ...defaultFilter.criteria
-                        },
-                        filter: {
-                            ...param.filter,
-                            ...defaultFilter.filter
-                        },
-                        data: {
-                            ...param.data,
-                            ...defaultFilter.data
-                        },
-                        sort: {
-                            ...sort,
-                            ...defaultFilter.sort
-                        }
-                    },
-                    paging: {
-                        limit: totalRecordState,
-                        page: 1
-                    }
+                    limit: totalRecordState,
+                    page: 1,
+                    search: searcha.search
                 })
                 setLoading(false)
                 // setIsNew(false)
