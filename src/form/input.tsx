@@ -8,6 +8,7 @@ import { IMaskInput } from 'react-imask';
 import InputAdornment from "@mui/material/InputAdornment";
 import { BgsButton } from "..";
 import ClearIcon from '@mui/icons-material/Clear';
+import Box from "@mui/material/Box";
 
 const TextMaskCustom = forwardRef<HTMLElement, any>(
     function TextMaskCustom(props, ref) {
@@ -94,7 +95,7 @@ export const BgsLabel = ({
             {prefix}
             <BgsLabelIcon editorType={editorType} label={label} showIcon={showIcon} editorOptions={editorOptions} />
             {text || label?.text}
-            {editorType !== "checkbox" && (((label?.showColon === undefined || label?.showColon) && validation.includes("required")) && <sup className="text-danger">*</sup>)}
+            {editorType !== "checkbox" && (((label?.showColon === undefined || label?.showColon) && validation.includes("required")) && <Box component="sup" sx={{ color: "red", float: "right", mt: "-3px" }}>*</Box>)}
             {suffix}
         </>
     </span>
