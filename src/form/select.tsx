@@ -945,7 +945,7 @@ const BgsSelect = forwardRef(({
                                             }
                                         }}
                                     >
-                                        {!dataSourceState.length ? <Box className="MuiDataGrid-overlay d-flex align-items-center justify-content-center flex-column w-100 hg-150">
+                                        {!dataSourceState.length ? <Box className="MuiDataGrid-overlay d-flex align-items-center justify-content-center flex-column w-100 hg-150" sx={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "center", padding: "20px" }}>
                                             <svg width="100" height="50" viewBox="0 0 64 41" xmlns="http://www.w3.org/2000/svg">
                                                 <g transform="translate(0 1)" fill="none" fillRule="evenodd">
                                                     <ellipse fill="#F5F5F5" cx="32" cy="33" rx="32" ry="7"></ellipse>
