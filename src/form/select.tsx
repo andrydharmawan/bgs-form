@@ -335,13 +335,13 @@ const BgsSelect = forwardRef(({
                     if (helper && valueExpr) {
                         if (loading) return;
 
-                        
+
                         let { status, data }: ResponseModel = await helper({
                             limit: limitState,
                             page: 1,
                             [`filter[${valueExpr}]`]: defaultValue || ""
                         })
-                        
+
                         if (status && isArray(data, 0)) {
                             data = data.map(remapDataSource);
                             setDataSelected(data)
@@ -674,6 +674,7 @@ const BgsSelect = forwardRef(({
                                         label: <BgsLabel label={label} showIcon={showIcon} validation={validation} editorType={editorType} editorOptions={editorOptions} formControl={formControl} dataField={dataField} />
                                     } : { label: "" }}
                                     helperText={error?.message || label?.hint}
+                                    size="small"
                                     // variant="outlined"
                                     variant={apperance}
                                     InputLabelProps={showLabelShrink ? {
